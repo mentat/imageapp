@@ -1,13 +1,13 @@
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 
-import views
+from images import views
 
 application = webapp.WSGIApplication([
-	('/', views.MainHandler),
-	('/upload', views.UploadHandler),
-	('/serve/([^/]+)', views.ServeHandler),
-	('/thumb/([0-9]+)/([0-9]+)/([^/]+)', ServeThumbHandler)
+	('/images/', views.MainHandler),
+	('/images/upload', views.UploadHandler),
+	('/images/serve/([^/]+)', views.ServeHandler),
+	('/images/thumb/([0-9]+)/([0-9]+)/([^/]+)', views.ServeThumbHandler)
 	], debug=True)
 
 def main():

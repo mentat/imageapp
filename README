@@ -14,6 +14,20 @@ This application uses Mootools and the cwcrop from http://github.com/mariofische
 
 ==== Using:
 
+Add this to your app in a dir called 'images'.  You could do a submodule:
+
+    git submodule add git@github.com:mentat/imageapp.git images
+    git submodule init
+
+Make sure to add these two items to your app.yaml:
+
+    - url: /static/images
+      static_dir: images/static
+      secure: optional
+
+    - url: /images.*
+      script: images/main.py
+
 ==== Reporting bugs:
 
 Send mail to Jesse Lovelace <jesse.lovelace@gmail.com>

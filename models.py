@@ -1,10 +1,11 @@
 import logging
 
+from google.appengine.api import images
 from google.appengine.ext import db
 from google.appengine.ext import blobstore
 
 class Image(db.Model):
-	title = db.StringProperty(required=True)
+	title = db.StringProperty(required=False)
 	added_at = db.DateTimeProperty(auto_now_add=True)
 	
 	image = blobstore.BlobReferenceProperty()
@@ -26,7 +27,9 @@ class Image(db.Model):
 		if index in self.thumb_sizes:
 			return db.get(self.thumb_sizes.index(index))
 		
-		img = images.Image(blob_key=self.cropped and self.cropped or self.image)
+		img = images.Image(blob_key=self.cropped and \
+			str(self.cropped.key()) or str(self.image.key()))
+			
 		img.resize(width=width, height=height)
 		
 		data = img.execute_transforms(output_encoding=images.JPEG)
