@@ -1,0 +1,19 @@
+Image App is a BSD-licensed image processing service for AppEngine written in Python.
+http://github.com/mentat/Image-App
+
+This application uses Mootools and the cwcrop from http://github.com/mariofischer/cwcrop.
+
+==== Features:
+
+* Add images to the blobstore.
+* Automatically generate thumbnails by URL.
+* Works with plupload.
+* Crop images.
+
+==== Bugs or missing features:
+
+==== Using:
+
+==== Reporting bugs:
+
+Send mail to Jesse Lovelace <jesse.lovelace@gmail.com>
