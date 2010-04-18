@@ -6,6 +6,7 @@ from images import views
 application = webapp.WSGIApplication([
 	('/images/', views.MainHandler),
 	('/images/upload', views.UploadHandler),
+	('/images/crop/([^/]+)', views.CropHandler),
 	('/images/serve/([^/]+)', views.ServeHandler),
 	('/images/thumb/([0-9]+)/([0-9]+)/([^/]+)', views.ServeThumbHandler)
 	], debug=True)

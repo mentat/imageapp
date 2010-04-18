@@ -25,7 +25,7 @@ class Image(db.Model):
 	def get_thumb(self, width, height):
 		index = '%d,%d' % (width, height)
 		if index in self.thumb_sizes:
-			return db.get(self.thumb_sizes.index(index))
+			return db.get(self.thumbs[self.thumb_sizes.index(index)])
 		
 		img = images.Image(blob_key=self.cropped and \
 			str(self.cropped.key()) or str(self.image.key()))
