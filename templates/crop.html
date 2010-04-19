@@ -2,28 +2,22 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<meta name="author" content="Mario Fischer" />
-	<link rel="stylesheet" type="text/css" href="/static/images/ysr-crop.css" media="all" />
+	<link rel="stylesheet" type="text/css" href="/static{{IMAGE_APP_PREFIX}}ysr-crop.css" media="all" />
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/mootools/1.2.4/mootools-yui-compressed.js"></script>
-	<script type="text/javascript" src="/static/images/mootools-1.2.4.4-more.js"></script>
-	<script type="text/javascript" src="/static/images/ysr-crop.js"></script>
+	<script type="text/javascript" src="/static{{IMAGE_APP_PREFIX}}mootools-1.2.4.4-more.js"></script>
+	<script type="text/javascript" src="/static{{IMAGE_APP_PREFIX}}ysr-crop.js"></script>
 	<title>{{img.title}}</title>
 	<script type="text/javascript">
 	var ch;
 	window.addEvent("domready", function() {
 		ch = new CwCrop({
-			{#minsize: {x: 95, y: 70},#}
-			{#maxratio: {x: 1.5, y: 2.0},#}
+			maxsize: { x:{{width}}, y:{{height}} } ,
 			onCrop: function(values) {
-				document.forms["crop"].elements["crop[x]"].value = values.x;
-				document.forms["crop"].elements["crop[y]"].value = values.y;
-				document.forms["crop"].elements["crop[w]"].value = values.w;
-				document.forms["crop"].elements["crop[h]"].value = values.h;
-				alert("Selected area is: " + values.x + "," + values.y + " @ " + values.w + " x " + values.h);
-				/*
-				Here the form should be submitted usually (instead of the alert..):
+				document.forms["crop"].elements["crop[x]"].value = values.x/{{width}};
+				document.forms["crop"].elements["crop[y]"].value = values.y/{{height}};
+				document.forms["crop"].elements["crop[w]"].value = (values.w+values.x)/{{width}};
+				document.forms["crop"].elements["crop[h]"].value = (values.h+values.y)/{{height}};
 				document.forms["crop"].submit();
-				*/
 			}
 		});
 	});
@@ -32,20 +26,19 @@
 
 <body>
 	<div id="imgouter">
-		<div id="cropframe" style="background-image: url('/images/thumb/300/1200/{{img.key}}')">
+		<div id="cropframe" style="background-image: url('{{IMAGE_APP_PREFIX}}thumb/{{width}}/{{height}}/{{img.key}}')">
 			<div id="draghandle"></div>
 			<div id="resizeHandleXY" class="resizeHandle"></div>
 			<div id="cropinfo" rel="Click to crop">
 				<div title="Click to crop" id="cropbtn"></div>
-				<div id="cropdims"></div>
 			</div>
 		</div>
 		
-		<div id="imglayer" style="width: {{width|default:"300"}}px; height: 300px; background-image: url('/images/thumb/300/1200/{{img.key}}')">
+		<div id="imglayer" style="width: {{width}}px; height: {{height}}px; background-image: url('{{IMAGE_APP_PREFIX}}thumb/{{width}}/{{height}}/{{img.key}}')">
 		</div>
 	</div>
 	
-	<form name="crop" method="post" action="#">
+	<form name="crop" method="post" action="{{IMAGE_APP_PREFIX}}crop/{{img.key}}">
 		<p>
 			<button onclick="ch.doCrop()">Crop</button>
 		</p>
@@ -54,5 +47,10 @@
 		<input type="hidden" name="crop[w]" value="0" />
 		<input type="hidden" name="crop[h]" value="0" />
 	</form>
+	{% if img.cropped %}
+	<form name="clearCrop" method="post" action="{{IMAGE_APP_PREFIX}}clear_crop/">
+		<input type="submit" value="Clear Crop"/>
+	</form>
+	{% endif %}
 </body>
 </html>

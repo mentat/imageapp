@@ -14,19 +14,32 @@ This application uses Mootools and the cwcrop from http://github.com/mariofische
 
 ==== Using:
 
-Add this to your app in a dir called 'images'.  You could do a submodule:
+Add this to your app in a dir called 'imageapp' (or whatever).  You could 
+do a submodule:
 
-    git submodule add git@github.com:mentat/imageapp.git images
+    git submodule add git@github.com:mentat/imageapp.git WHERE_EVER_YOU_WANT
     git submodule init
 
 Make sure to add these two items to your app.yaml:
 
-    - url: /static/images
-      static_dir: images/static
+    - url: /static/SOME_PATH
+      static_dir: WHERE_EVER_YOU_WANT/static
       secure: optional
 
-    - url: /images.*
-      script: images/main.py
+    - url: /SOME_PATH.*
+      script: WHERE_EVER_YOU_WANT/main.py
+
+By default the app assumes WHERE_EVER_YOU_WANT and SOME_PATH are 'imageapp/' but
+you can customize this by placing a file called settings.py in the root of
+your GAE project and adding the variable:
+
+IMAGE_APP_PREFIX = '/my_imageapp_location/' 
+
+Make sure to add the trailing slash.  Also, make sure that matches the URLs in 
+your app.yaml (both static, which should become /static/my_imageapp_location/ and
+the main.py URL, /my_imageapp_location.* ).  Note, this variable just affects the
+internal URL handling, not the directory you put the code in.  All that matters for
+that is the script and static_dir lines in the app.yaml.
 
 ==== Reporting bugs:
 

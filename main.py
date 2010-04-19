@@ -4,11 +4,11 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 from images import views
 
 application = webapp.WSGIApplication([
-	('/images/', views.MainHandler),
-	('/images/upload', views.UploadHandler),
-	('/images/crop/([^/]+)', views.CropHandler),
-	('/images/serve/([^/]+)', views.ServeHandler),
-	('/images/thumb/([0-9]+)/([0-9]+)/([^/]+)', views.ServeThumbHandler)
+	('%s' % views.IMAGE_APP_PREFIX, views.MainHandler),
+	('%supload' % views.IMAGE_APP_PREFIX, views.UploadHandler),
+	('%scrop/([^/]+)' % views.IMAGE_APP_PREFIX, views.CropHandler),
+	('%sserve/([^/]+)' % views.IMAGE_APP_PREFIX, views.ServeHandler),
+	('%sthumb/([0-9]+)/([0-9]+)/([^/]+)' % views.IMAGE_APP_PREFIX, views.ServeThumbHandler)
 	], debug=True)
 
 def main():
