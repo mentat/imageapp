@@ -21,6 +21,12 @@ class Image(db.Model):
 	# A list of thumb sizes, stored as width,height
 	thumb_sizes = db.StringListProperty()
 	
+	def __unicode__(self):
+		if self.title:
+			return self.title
+		else:
+			return u'%s' % (self.image.filename)
+	
 	def cleanup(self):
 		" Cleanup and remove all the extra stuff for this image. "
 		blobstore.delete(self.image)
