@@ -1,7 +1,9 @@
 import os
 import urllib
+import logging
 
 from google.appengine.ext import db
+from google.appengine.api import images
 from google.appengine.ext import blobstore
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import blobstore_handlers
@@ -11,13 +13,13 @@ from models import Image, Thumbnail
 
 try:
 	import settings
-	IMAGE_APP_PREFIX = getattr(settings, 'IMAGE_APP_PREFIX', '/imageapp/')
+	IMAGE_APP_PATH = getattr(settings, 'IMAGE_APP_PATH', 'imageapp')
 except ImportError:
-	IMAGE_APP_PREFIX = '/imageapp/'
+	IMAGE_APP_PATH = 'imageapp'
 
 class MainHandler(webapp.RequestHandler):
 	def get(self):
-		upload_url = blobstore.create_upload_url('%supload' % IMAGE_APP_PREFIX)
+		upload_url = blobstore.create_upload_url('/%s/upload' % IMAGE_APP_PATH)
 		self.response.out.write('<html><body>')
 		self.response.out.write('<form action="%s" method="POST" enctype="multipart/form-data">' % upload_url)
 		self.response.out.write("""Upload File: <input type="file" name="file"><br> <input type="submit" 
@@ -46,20 +48,54 @@ class UploadHandler(blobstore_handlers.BlobstoreUploadHandler):
 		img = Image(title=self.request.POST.get('title', ''), image=blob_info)
 		img.put()
 		
-		upload_url = urllib.quote(blobstore.create_upload_url('%supload' % IMAGE_APP_PREFIX))
+		upload_url = urllib.quote(blobstore.create_upload_url('/%s/upload' % IMAGE_APP_PATH))
 		self.response.set_status(303)
-		self.redirect('%supload?key=%s&newurl=%s' % (
-			IMAGE_APP_PREFIX,
+		self.redirect('/%s/upload?key=%s&newurl=%s' % (
+			IMAGE_APP_PATH,
 			urllib.quote(str(img.key())), upload_url))
+			
+class UploadInternalHandler(blobstore_handlers.BlobstoreUploadHandler):
+
+	def get(self):
+		from django.utils import simplejson
+		
+		key = urllib.unquote(self.request.GET.get('key',''))
+		newurl = urllib.unquote(self.request.GET.get('newurl', ''))
+		
+		self.response.headers['Content-Type'] = "application/json"
+
+		self.response.out.write(simplejson.dumps({
+			'key':key,
+			'newurl':newurl
+		}))
+	
+	def post(self):
+		" Post to blobstore, create Image object and redirect to info URL. "
+		upload_files = self.get_uploads('file')
+		blob_info = upload_files[0]
+		
+		upload_url = urllib.quote(blobstore.create_upload_url('/%s/internal/upload' % IMAGE_APP_PATH))
+		self.response.set_status(303)
+		self.redirect('/%s/internal/upload?key=%s&newurl=%s' % (
+			IMAGE_APP_PATH,
+			urllib.quote(str(blob_info.key())), upload_url))
 
 class ServeHandler(blobstore_handlers.BlobstoreDownloadHandler):
 	def get(self, image_key):
-		
-		img = Image.get(image_key)
-		self.send_blob(img.image)
+		if len(image_key) < 30:
+			self.send_blob(blobstore.BlobInfo.get(image_key))
+		else:
+			img = Image.get(image_key)
+			self.send_blob(img.image)
 		
 class ServeThumbHandler(webapp.RequestHandler):
 	def get(self, width, height, image_key):
+		
+		if len(image_key) < 30:
+			img = images.Image(blob_key = urllib.unquote(image_key))
+			img.resize(width=int(width), height=int(height))
+			self.response.headers['Content-Type'] = "image/jpeg"
+			return self.response.out.write(img.execute_transforms(output_encoding=images.JPEG))
 		
 		width, height = int(width), int(height)
 		index = '%d,%d' % (width, height)
@@ -98,7 +134,7 @@ class CropHandler(webapp.RequestHandler):
 			'img':img, 
 			'width': width,
 			'height': height,
-			'IMAGE_APP_PREFIX':IMAGE_APP_PREFIX 
+			'IMAGE_APP_PATH':IMAGE_APP_PATH 
 		}))
 		
 	def post(self, image_key):
@@ -115,4 +151,4 @@ class CropHandler(webapp.RequestHandler):
 		img = Image.get(image_key)
 		img.do_crop(left, top, right, bottom)
 		
-		self.redirect('%scrop/%s' % (IMAGE_APP_PREFIX, str(img.key())))
+		self.redirect('/%s/crop/%s' % (IMAGE_APP_PATH, str(img.key())))

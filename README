@@ -1,5 +1,5 @@
 Image App is a BSD-licensed image processing service for AppEngine written in Python.
-http://github.com/mentat/Image-App
+http://github.com/mentat/imageapp
 
 This application uses Mootools and the cwcrop from http://github.com/mariofischer/cwcrop.
 
@@ -14,32 +14,35 @@ This application uses Mootools and the cwcrop from http://github.com/mariofische
 
 ==== Using:
 
-Add this to your app in a dir called 'imageapp' (or whatever).  You could 
+Add this to your app in a dir called 'imageapp' (called PATH below).  You could 
 do a submodule:
 
-    git submodule add git@github.com:mentat/imageapp.git WHERE_EVER_YOU_WANT
+    git submodule add git@github.com:mentat/imageapp.git PATH
     git submodule init
 
 Make sure to add these two items to your app.yaml:
 
-    - url: /static/SOME_PATH
-      static_dir: WHERE_EVER_YOU_WANT/static
+    - url: /static/PATH
+      static_dir: PATH/static
       secure: optional
 
-    - url: /SOME_PATH.*
-      script: WHERE_EVER_YOU_WANT/main.py
+    - url: /PATH.*
+      script: PATH/main.py
 
-By default the app assumes WHERE_EVER_YOU_WANT and SOME_PATH are 'imageapp/' but
+By default the app assumes PATH is 'imageapp' but
 you can customize this by placing a file called settings.py in the root of
 your GAE project and adding the variable:
 
-IMAGE_APP_PREFIX = '/my_imageapp_location/' 
+IMAGE_APP_PATH = 'my_imageapp_location' 
 
-Make sure to add the trailing slash.  Also, make sure that matches the URLs in 
-your app.yaml (both static, which should become /static/my_imageapp_location/ and
-the main.py URL, /my_imageapp_location.* ).  Note, this variable just affects the
-internal URL handling, not the directory you put the code in.  All that matters for
-that is the script and static_dir lines in the app.yaml.
+Make sure that this matches the URLs in your app.yaml which would become. 
+
+    - url: /static/my_imageapp_location
+      static_dir: my_imageapp_location/static
+      secure: optional
+
+    - url: /my_imageapp_location.*
+      script: my_imageapp_location/main.py
 
 ==== Reporting bugs:
 

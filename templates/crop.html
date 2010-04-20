@@ -2,10 +2,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<link rel="stylesheet" type="text/css" href="/static{{IMAGE_APP_PREFIX}}ysr-crop.css" media="all" />
+	<link rel="stylesheet" type="text/css" href="/static/{{IMAGE_APP_PATH}}/ysr-crop.css" media="all" />
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/mootools/1.2.4/mootools-yui-compressed.js"></script>
-	<script type="text/javascript" src="/static{{IMAGE_APP_PREFIX}}mootools-1.2.4.4-more.js"></script>
-	<script type="text/javascript" src="/static{{IMAGE_APP_PREFIX}}ysr-crop.js"></script>
+	<script type="text/javascript" src="/static/{{IMAGE_APP_PATH}}/mootools-1.2.4.4-more.js"></script>
+	<script type="text/javascript" src="/static/{{IMAGE_APP_PATH}}/ysr-crop.js"></script>
 	<title>{{img.title}}</title>
 	<script type="text/javascript">
 	var ch;
@@ -26,7 +26,7 @@
 
 <body>
 	<div id="imgouter">
-		<div id="cropframe" style="background-image: url('{{IMAGE_APP_PREFIX}}thumb/{{width}}/{{height}}/{{img.key}}')">
+		<div id="cropframe" style="background-image: url('/{{IMAGE_APP_PATH}}/thumb/{{width}}/{{height}}/{{img.key}}')">
 			<div id="draghandle"></div>
 			<div id="resizeHandleXY" class="resizeHandle"></div>
 			<div id="cropinfo" rel="Click to crop">
@@ -34,11 +34,11 @@
 			</div>
 		</div>
 		
-		<div id="imglayer" style="width: {{width}}px; height: {{height}}px; background-image: url('{{IMAGE_APP_PREFIX}}thumb/{{width}}/{{height}}/{{img.key}}')">
+		<div id="imglayer" style="width: {{width}}px; height: {{height}}px; background-image: url('/{{IMAGE_APP_PATH}}/thumb/{{width}}/{{height}}/{{img.key}}')">
 		</div>
 	</div>
 	
-	<form name="crop" method="post" action="{{IMAGE_APP_PREFIX}}crop/{{img.key}}">
+	<form name="crop" method="post" action="/{{IMAGE_APP_PATH}}/crop/{{img.key}}">
 		<p>
 			<button onclick="ch.doCrop()">Crop</button>
 		</p>
@@ -48,7 +48,7 @@
 		<input type="hidden" name="crop[h]" value="0" />
 	</form>
 	{% if img.cropped %}
-	<form name="clearCrop" method="post" action="{{IMAGE_APP_PREFIX}}clear_crop/">
+	<form name="clearCrop" method="post" action="/{{IMAGE_APP_PATH}}/clear_crop/">
 		<input type="submit" value="Clear Crop"/>
 	</form>
 	{% endif %}
