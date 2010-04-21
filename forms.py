@@ -84,6 +84,9 @@ class ImageWidget(ImageAppWidget):
 class ImageForm(djangoforms.ModelForm):
 	class Meta:
 		model = models.Image
-		exclude = ['ratio', 'thumbs', 'thumb_sizes']
+		exclude = ['ratio', 'thumbs', 'thumb_sizes', 'cropped']
 		
-	image = forms.FileField(widget=BlobImageWidget)
+	image = forms.CharField(widget=BlobImageWidget)
+	
+	def clean_image(self):
+		return blobstore.BlobKey(self.cleaned_data['image'])
